@@ -1,14 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import * as tokenJson from "./assets/MyToken.json"
-import { createPublicClient, http, Address} from 'viem';
+import { createPublicClient, http, Address, formatEther} from 'viem';
 import {sepolia} from 'viem/chains'
 import { ConfigService } from '@nestjs/config';
 
 
 @Injectable()
 export class AppService {
-  
-  constructor(private configService: ConfigService) {}
+  private publicClient; 
+
+  constructor(private configService: ConfigService) {
+
+    this.publicClient = createPublicClient({
+      chain: sepolia,
+      transport: http(this.configService.get<string>('RPC_ENDPOINT_URL')),
+    });
+
+  }
+
 
   getHello(): string {
     return 'Hello World!';
@@ -19,11 +28,8 @@ export class AppService {
   }
 
   async getTokenName(): Promise<string> {
-    const publicClient = createPublicClient({
-      chain: sepolia,
-      transport: http(this.configService.get<string>('RPC_ENDPOINT_URL')),
-    });
-    const name = await publicClient.readContract({
+   
+    const name = await this.publicClient.readContract({
       address: this.getContractAddress(),
       abi: tokenJson.abi,
       functionName: "name"
@@ -32,7 +38,20 @@ export class AppService {
   }
 
   async getTotalSupply(): Promise<string>{
-    return null;
+    
+    const symbol = await this.publicClient.readContract({
+      address: this.getContractAddress(),
+      abi: tokenJson.abi,
+      functionName: "symbol"
+    });
+
+    const supply = await this.publicClient.readContract({
+      address: this.getContractAddress(),
+      abi: tokenJson.abi,
+      functionName: "totalSupply"
+    });
+
+    return `${formatEther(supply as bigint)} ${symbol}`
   }
 
   async getTokenBalance(address: string): Promise<string>{
