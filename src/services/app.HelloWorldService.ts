@@ -1,19 +1,44 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable } from '@nestjs/common';
+import * as helloWorldJson from "../assets/HelloWorld.json"
+import { BaseBlockchainService } from './blockchain.service';
+
 
 @Injectable()
-export class HelloWorldService {
+export class HelloWorldService extends BaseBlockchainService{
 
-  private text: string = 'Hello World';
+  async getText(): Promise<string>{
 
-  getHello(): string {
-    return "Hello World"
+    let text = await this.publicClient.readContract({
+      address: helloWorldJson.address,
+      abi: helloWorldJson.abi,
+      functionName: "helloWorld"
+    })
+
+    console.log('TEXT from block chain --- ', text)
+
+    return text
   }
 
-  setNewText(newText: string): string {
-    this.text = newText;
-    // return this.text;
-    console.log('TEXT === ', newText)
-    return newText;
+
+  async setNewText(newText: string): Promise<string>{
+    let newTextTxn = await this.walletClient.writeContract({
+      address: helloWorldJson.address,
+      abi: helloWorldJson.abi,
+      functionName: "setText",
+      args: [newText],
+      account: this.walletClient.account
+
+    })
+
+    let {status} = await this.publicClient.waitForTransactionReceipt({ hash:newTextTxn })
+
+    if (status === "success") return await this.getText()
+    return null;
+      
+    
+
   }
+
+
 
 }

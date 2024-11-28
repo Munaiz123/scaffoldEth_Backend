@@ -7,14 +7,15 @@ export class HelloWorldController {
   constructor(private readonly helloWorldService: HelloWorldService) {}
 
     @Get()
-    getHello(): {result: string} {
-      return {result: this.helloWorldService.getHello()};
+    async getHello(): Promise<{result: string}> {
+      return {result: await this.helloWorldService.getText()};
     } 
 
     @Post()
-    setNewText(@Query('newText') newText: string): {result: string} {
+    async setNewText(@Query('newText') newText: string): Promise<{result: string}> {
       console.log(newText)
-      return {result:this.helloWorldService.setNewText(newText)}
+      return {result: await this.helloWorldService.setNewText(newText)}
     }
+
 
 }
