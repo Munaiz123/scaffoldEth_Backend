@@ -1,16 +1,11 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { AppService } from './app.service';
-import { MintTokenDto } from './dtos/mintTokens.dto';
+import { AppService } from '../services/app.service';
+import { MintTokenDto } from '../dtos/mintTokens.dto';
 
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
-
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
 
   @Get('contractAddress')
   getContractAddress(){

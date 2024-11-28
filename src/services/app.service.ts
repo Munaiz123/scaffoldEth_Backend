@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import * as tokenJson from "./assets/MyToken.json"
+import * as tokenJson from "../assets/MyToken.json"
+
 import { createPublicClient, http, Address, formatEther, createWalletClient} from 'viem';
+
 import {sepolia} from 'viem/chains'
 import { ConfigService } from '@nestjs/config';
 import { privateKeyToAccount } from 'viem/accounts';
@@ -9,7 +11,6 @@ import { privateKeyToAccount } from 'viem/accounts';
 @Injectable()
 export class AppService {
  
-  
   publicClient; 
   walletClient; 
 
