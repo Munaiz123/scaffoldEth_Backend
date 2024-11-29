@@ -3,7 +3,7 @@ import * as tokenJson from "../assets/MyToken.json"
 
 import { createPublicClient, http, Address, formatEther, createWalletClient} from 'viem';
 
-import {sepolia} from 'viem/chains'
+import {baseSepolia, sepolia} from 'viem/chains'
 import { ConfigService } from '@nestjs/config';
 import { privateKeyToAccount } from 'viem/accounts';
 
@@ -18,14 +18,14 @@ export class AppService {
     const account = privateKeyToAccount(`0x${this.configService.get<string>('MUNZY_TEST_PRIVATE_KEY')}`);
     
     this.publicClient = createPublicClient({
-      chain: sepolia,
-      transport: http(this.configService.get<string>('RPC_ENDPOINT_URL')),
+      chain: baseSepolia,
+      transport: http(this.configService.get<string>('BASE_SEPOLIA_RPC_ENDPOINT_URL')),
     });
 
 
     this.walletClient = createWalletClient({
-      transport: http(process.env.RPC_ENDPOINT_URL),
-      chain: sepolia,
+      transport: http(this.configService.get<string>('BASE_SEPOLIA_RPC_ENDPOINT_URL')),
+      chain: baseSepolia,
       account
     });
 
