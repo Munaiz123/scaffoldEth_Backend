@@ -21,7 +21,36 @@ export class VotesService extends BaseBlockchainService{
     let {status} = await this.publicClient.waitForTransactionReceipt({ hash:mintTxn })
     console.log('Minting Status === ', status)
     return status;
- 
+  }
+
+
+  async checkVotingRights(walletAddress: string): Promise<{ hasRights: boolean, balance: string }> {
+
+    try {
+      // Read balance from the contract
+      const balance = await this.publicClient.readContract({
+        address: myErc20.address, // Your ERC20 token contract address
+        abi: myErc20.abi,
+        functionName: 'balanceOf',
+        args: [walletAddress]
+      });
+  
+      // Convert balance to string to avoid BigInt serialization issues
+      const balanceString = balance.toString();
+      
+      // Consider any positive balance as having voting rights
+      const hasRights = BigInt(balance) > BigInt(0);
+  
+      return {
+        hasRights,
+        balance: balanceString
+      };
+
+    } catch (error) {
+      console.error('Error checking voting rights:', error);
+      throw new Error('Failed to check voting rights');
+    }
+
   }
 
 }

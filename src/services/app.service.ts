@@ -15,7 +15,7 @@ export class AppService {
   walletClient; 
 
   constructor(private configService: ConfigService) {
-    const account = privateKeyToAccount(`0x${this.configService.get<string>('MUNZY_TEST_PRIVATE_KEY')}`);
+    const account = privateKeyToAccount(`0x${this.configService.get<string>('ACCOUNT1_PRIVATE_KEY')}`);
     
     this.publicClient = createPublicClient({
       chain: baseSepolia,

@@ -6,6 +6,11 @@ export class VotesController {
 
   constructor(private readonly votesService: VotesService) {}
 
+  @Get('checkVotingRights')
+  async checkVotingRights(@Query('walletAddress') walletAddress: string): Promise<{ hasRights: boolean, balance: string }> {
+    return await this.votesService.checkVotingRights(walletAddress);
+  }
+
 
   @Post()
   async giveVotingRights(@Body() payload: { walletAddress: string, amount: bigint }): Promise<{result: string}> {
@@ -16,6 +21,5 @@ export class VotesController {
       )
     }
   }
-
 
 }
