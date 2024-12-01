@@ -1,5 +1,7 @@
 import { Body, Controller, Get, Post, Query } from "@nestjs/common";
 import { VotesService } from "src/services/app.VotesService";
+import { CastVoteDto } from '../dtos/votes.dto';
+import { GiveVotingRightsDto } from "src/dtos/giveVotingRights.dto";
 
 @Controller('votes')
 export class VotesController {
@@ -13,7 +15,7 @@ export class VotesController {
 
 
   @Post()
-  async giveVotingRights(@Body() payload: { walletAddress: string, amount: bigint }): Promise<{result: string}> {
+  async giveVotingRights(@Body() payload:GiveVotingRightsDto): Promise<{result: string}> {
     return {
       result: await this.votesService.giveVotingRights(
         payload.walletAddress, 
@@ -21,5 +23,18 @@ export class VotesController {
       )
     }
   }
+
+  @Post('cast')
+  async castVote(@Body() payload: CastVoteDto): Promise<{ result: string }> {
+
+  return {
+      result: await this.votesService.castVote(
+      payload.proposal,
+      payload.amount,
+      payload.walletAddress
+      )
+  }
+
+}
 
 }
